@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Large-Scale Metric 3D Reconstruction — Building TUM in a Day — Han Wu</title>
+<meta content="A feed-forward reconstruction pipeline combining VGGT, MASt3R, NKSR and CityGaussian to reconstruct an entire university building from monocular video." name="description"/>
+<link href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;text y='.9em' font-size='90'&gt;🧊&lt;/text&gt;&lt;/svg&gt;" rel="icon"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="../assets/css/style.css" rel="stylesheet"/>
+<script src="../assets/js/boot.js"></script>
+</head>
+<body>
+<nav class="nav">
+<div class="nav-inner">
+<a class="brand" href="../index.html">Han Wu</a>
+<div class="nav-links">
+<a href="../index.html">Home</a>
+<a class="active" href="../projects.html">Projects</a>
+
+<button class="icon-btn" data-toggle-theme="" type="button">☾</button>
+</div>
+</div>
+</nav>
+<main class="wrap">
+<header class="page-head">
+<a class="back" href="../projects.html">← All projects</a>
+<h1>Large-Scale Metric 3D Reconstruction — Building TUM in a Day</h1>
+<p class="meta" style="margin-top:12px;">
+<span class="badge badge-completed">Completed</span>
+<span>👥 Semester Project · TUM Computer Vision Group · Supervisor: Prof. Daniel Cremers</span>
+<span>📅 2025.03 – 2025.08</span>
+</p>
+<ul class="tags"><li>3D Reconstruction</li><li>VGGT-1B</li><li>MASt3R</li><li>NKSR</li><li>CityGaussian</li><li>Metric Scale</li><li>Sim(3) Alignment</li></ul>
+<p class="lede">Scaling transformer-based reconstruction from a handful of views to an entire building — chunked video, per-batch VGGT, MASt3R for metric scale, and a global alignment that holds it all in one coordinate frame.</p>
+<div class="actions" style="margin-top:20px;"><a class="btn" href="https://github.com/wuh2034/Large-Scale-Metric-3D-Reconstruction" rel="noopener" target="_blank"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58l-.01-2.05c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5.99.11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.34-5.47-5.96 0-1.32.47-2.39 1.24-3.23-.12-.31-.54-1.53.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6.010 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.24 2.87.12 3.18.77.84 1.23 1.91 1.23 3.23 0 4.63-2.8 5.65-5.48 5.95.43.37.81 1.1.81 2.22l-.01 3.29c0 .32.22.7.83.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5Z"></path></svg> Code</a><a class="btn ghost" href="https://github.com/wuh2034/Large-Scale-Metric-3D-Reconstruction/blob/main/assets/DL4SAI_Building_TUM_in_a_Day.pdf" rel="noopener" target="_blank">Full report (PDF)</a></div>
+</header>
+<section>
+<div class="card prose">
+<figure>
+<video autoplay loop muted playsinline poster="../assets/img/largescale-poster.jpg">
+<source src="../assets/img/largescale-demo.mp4" type="video/mp4"/>
+</video>
+<figcaption>Dense reconstruction of the TUM Mathematics and Informatics building, recovered from monocular RGB video.</figcaption>
+</figure>
+
+<h2>The problem</h2>
+<p>City-scale capture — buildings, blocks, campuses — breaks feed-forward reconstruction in three ways at once: a long video does not fit into one forward pass, every chunk comes back in its own local coordinate frame and scale, and error accumulates across chunks. The pipeline is built around exactly those three failures: <em>video chunking → local reconstruction → cross-batch alignment → scale recovery → dense representation</em>.</p>
+
+<div class="stat-row">
+<div class="stat"><div class="v">~1,300</div><div class="k">frames of self-captured video</div></div>
+<div class="stat"><div class="v">40</div><div class="k">frames per overlapping batch</div></div>
+<div class="stat"><div class="v">26.37 dB</div><div class="k">outdoor novel-view PSNR</div></div>
+<div class="stat"><div class="v">21.88 dB</div><div class="k">indoor novel-view PSNR</div></div>
+</div>
+
+<h2>Fixed-budget chunking</h2>
+<p>Roughly 1,300 self-captured frames are uniformly sampled and screened for motion blur with a Laplacian criterion, then organised into fixed <strong>40-frame batches with deliberate overlap</strong>. The fixed budget bounds compute and VRAM per step; the overlap is what later gives cross-batch alignment stable correspondences to work with.</p>
+
+<h2>Local geometry recovery</h2>
+<p><strong>VGGT-1B</strong> runs per batch, predicting camera parameters, depth and confidence, which are back-projected into a dense point cloud. Confidence filtering does real work here — it is what stops the building's glass facade and other reflective surfaces from poisoning the fusion with bad depth.</p>
+
+<h2>Metric scale estimation</h2>
+<p>Each batch is split into three interleaved subsequences, and <strong>MASt3R</strong>'s metric point cloud is used to match scale and translation between them. The resulting scale estimates are screened by cross-subsequence variance, keeping only the stable ones — that screening is what turns a set of locally correct reconstructions into a single metrically consistent scene.</p>
+
+<h2>Dense representation and results</h2>
+<p><strong>NKSR</strong> recovers dense surfaces from the fused cloud and <strong>CityGaussian</strong> handles large-scale Gaussian rendering. As a team we ran the full path from video to point cloud, mesh and Gaussian representation, on the TUM building's long trajectory as well as on city-scale datasets.</p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Novel-view rendering</th><th>PSNR ↑</th><th>SSIM ↑</th><th>LPIPS ↓</th></tr></thead>
+<tbody>
+<tr><td><strong>Outdoor</strong></td><td>26.37</td><td>0.855</td><td>0.184</td></tr>
+<tr><td><strong>Indoor</strong></td><td>21.88</td><td>0.726</td><td>0.342</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>Role</h2>
+<p>A three-person semester project at the TUM Computer Vision Group. I was responsible for the core vision chain — the video front end, VGGT local reconstruction and MASt3R scale estimation. The full write-up, <em>Building TUM in a Day</em>, is available as a PDF in the repository alongside the code.</p>
+
+</div>
+</section>
+</main>
+<footer>
+<div class="wrap">
+© 2026 Han Wu · Munich, Germany · <a href="mailto:wuh2034@gmail.com">wuh2034@gmail.com</a>
+
+</div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

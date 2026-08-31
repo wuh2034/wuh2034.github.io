@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Stereo Reconstruction from Scratch (C++ / OpenCV) — Han Wu</title>
+<meta content="A complete two-view stereo reconstruction pipeline in C++: feature matching, RANSAC fundamental matrix, calibrated and uncalibrated rectification, custom FastSGBM disparity, point clouds and meshes." name="description"/>
+<link href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;text y='.9em' font-size='90'&gt;🧊&lt;/text&gt;&lt;/svg&gt;" rel="icon"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="../assets/css/style.css" rel="stylesheet"/>
+<script src="../assets/js/boot.js"></script>
+</head>
+<body>
+<nav class="nav">
+<div class="nav-inner">
+<a class="brand" href="../index.html">Han Wu</a>
+<div class="nav-links">
+<a href="../index.html">Home</a>
+<a class="active" href="../projects.html">Projects</a>
+
+<button class="icon-btn" data-toggle-theme="" type="button">☾</button>
+</div>
+</div>
+</nav>
+<main class="wrap">
+<header class="page-head">
+<a class="back" href="../projects.html">← All projects</a>
+<h1>Stereo Reconstruction from Scratch (C++ / OpenCV)</h1>
+<p class="meta" style="margin-top:12px;">
+<span class="badge badge-completed">Completed</span>
+<span>📚 Course Project · Technical University of Munich</span>
+<span>📅 2024.09 – 2024.12</span>
+</p>
+<ul class="tags"><li>Stereo Vision</li><li>C++</li><li>OpenCV</li><li>Eigen</li><li>RANSAC</li><li>SGBM</li><li>Open3D</li></ul>
+<p class="lede">
+Classical two-view geometry implemented end to end in C++ — down to a hand-written rectification and disparity solver, rather than calling a library and hoping.
+
+</p>
+<div class="actions" style="margin-top:20px;"><a class="btn" href="https://github.com/wuh2034/stereo-reconstruction" rel="noopener" target="_blank"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58l-.01-2.05c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5.99.11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.34-5.47-5.96 0-1.32.47-2.39 1.24-3.23-.12-.31-.54-1.53.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6.010 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.24 2.87.12 3.18.77.84 1.23 1.91 1.23 3.23 0 4.63-2.8 5.65-5.48 5.95.43.37.81 1.1.81 2.22l-.01 3.29c0 .32.22.7.83.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5Z"></path></svg> Code</a></div>
+</header>
+<section>
+<div class="card prose">
+
+<h2>Overview</h2>
+<p>A full stereo reconstruction pipeline built on OpenCV and Eigen, taking a pair of images from the <strong>Middlebury Stereo Dataset</strong> all the way to rectified images, disparity maps, depth maps, point clouds and meshes. The point of the project was to implement the classical machinery rather than to consume it: both a library path and a hand-rolled path exist side by side, which makes the failure modes of each visible.</p>
+<h2>Pipeline</h2>
+<ul>
+<li><strong>Preprocessing.</strong> High-resolution Middlebury pairs with the dataset's intrinsics and extrinsics, converted to greyscale and prepared for geometric processing.</li>
+<li><strong>Features.</strong> Keypoints and descriptors from <strong>ORB, SIFT and BRISK</strong>, matched with KNN and filtered by a ratio test — three detectors so their behaviour can be compared on the same scene.</li>
+<li><strong>Two-view geometry.</strong> RANSAC estimates the fundamental matrix from the matches and counts inliers; the essential matrix follows from the intrinsics and is decomposed into relative rotation and translation.</li>
+<li><strong>Rectification, two ways.</strong> An <em>uncalibrated</em> path via <code>cv::stereoRectifyUncalibrated</code>, and a <em>calibrated</em> path implemented from scratch — projection matrices built from the intrinsics and a custom <code>myWarpPerspective</code> warp.</li>
+<li><strong>Disparity.</strong> OpenCV's <code>StereoSGBM</code> on the uncalibrated path (with CLAHE contrast enhancement), and a custom <code>FastSGBM</code> implementation on the calibrated path.</li>
+<li><strong>3D output.</strong> Triangulation to a sparse point cloud, dense correspondence and depth estimation on top of it, then visualisation and mesh generation with <strong>Open3D</strong>.</li>
+</ul>
+<h2>Code</h2>
+<p>Single-binary CMake project, with a Docker setup and the Middlebury scenes included: <a href="https://github.com/wuh2034/stereo-reconstruction" rel="noopener" target="_blank">wuh2034/stereo-reconstruction</a>.</p>
+
+</div>
+</section>
+</main>
+<footer>
+<div class="wrap">
+© 2026 Han Wu · Munich, Germany · <a href="mailto:wuh2034@gmail.com">wuh2034@gmail.com</a>
+
+</div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

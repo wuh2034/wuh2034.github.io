@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Projects — Han Wu</title>
+<meta name="description" content="Projects by Han Wu: VLM-guided world models, feed-forward Gaussian Splatting, large-scale metric 3D reconstruction, stereo reconstruction.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧊</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="assets/js/boot.js"></script>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">Han Wu</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a class="active" href="projects.html">Projects</a>
+      <button class="icon-btn" data-toggle-theme type="button">☾</button>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <header class="page-head">
+    <h1>Projects</h1>
+    <p class="lede">Research and course projects in 3D vision, generative world models and multimodal interaction. Most of the code is on <a href="https://github.com/wuh2034" target="_blank" rel="noopener">GitHub</a>.</p>
+  </header>
+
+  <section id="projects">
+    <div class="projects">
+
+      <article class="card project">
+        <div class="project-head">
+          <h3><a href="projects/vlm-world-model.html">VLM-Guided Interactive World Model</a></h3>
+          <span class="badge badge-active">Active</span>
+        </div>
+        <p class="meta">
+          <span>🎓 Master's Thesis · TUM Visual Computing &amp; AI Lab</span>
+          <span>📅 2025.12 – Present</span>
+        </p>
+        <ul class="tags">
+          <li>World Models</li><li>VLM</li><li>SGLang</li><li>LoRA / PEFT</li><li>KV Cache</li><li>Data Engine</li>
+        </ul>
+        <p class="desc">
+          A chunk-level closed loop — the VLM decides, the world model generates, the result is fed back — that has
+          distilled roughly <strong>12,000 interaction trajectories</strong> (≈60k chunks, 12 hours of video) and
+          fine-tunes <strong>LingBot-World v2</strong> on them. On the runtime side, SGLang scheduling and KV-cache
+          work cut 12-frame generation latency by <strong>45%</strong>.
+        </p>
+        <p class="stay-tuned">📢 Code and results will be released after the thesis defence — stay tuned!</p>
+        <div class="actions" style="margin-top:14px;">
+          <a class="btn ghost" href="projects/vlm-world-model.html">Details</a>
+        </div>
+      </article>
+
+      <article class="card project">
+        <div class="project-head">
+          <h3><a href="projects/feedforward-gaussian.html">Feed-forward Gaussian Splatting Reconstruction</a></h3>
+          <span class="badge badge-completed">Completed</span>
+        </div>
+        <p class="meta">
+          <span>🔬 Guided Research · TUM Visual Computing &amp; AI Lab</span>
+          <span>📅 2025.01 – 2025.08</span>
+        </p>
+        <ul class="tags">
+          <li>3D Gaussian Splatting</li><li>VGGT</li><li>gsplat</li><li>Feed-forward Reconstruction</li><li>Novel View Synthesis</li><li>ScanNet++</li>
+        </ul>
+        <video class="thumb" autoplay loop muted playsinline poster="assets/img/fgr-render-poster.jpg">
+          <source src="assets/img/fgr-render.mp4" type="video/mp4">
+        </video>
+        <p class="desc">
+          Predicts 3D Gaussians directly from uncalibrated multi-view images — a frozen VGGT backbone plus a
+          <strong>32.65M-parameter DPT-style Gaussian head</strong>, no per-scene optimisation. About
+          <strong>1 s for 14 views</strong>, and <strong>20.92 dB PSNR</strong> on ScanNet++ 2-view, beating Splatt3R
+          by 0.58 dB and pixelSplat on all three metrics.
+        </p>
+        <div class="actions">
+          <a class="btn" href="https://github.com/wuh2034/Feedforward-Gaussian-Reconstruction" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58l-.01-2.05c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5.99.11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.34-5.47-5.96 0-1.32.47-2.39 1.24-3.23-.12-.31-.54-1.53.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6.010 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.24 2.87.12 3.18.77.84 1.23 1.91 1.23 3.23 0 4.63-2.8 5.65-5.48 5.95.43.37.81 1.1.81 2.22l-.01 3.29c0 .32.22.7.83.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5Z"/></svg>
+            Code
+          </a>
+          <a class="btn ghost" href="projects/feedforward-gaussian.html">Details</a>
+        </div>
+      </article>
+
+      <article class="card project">
+        <div class="project-head">
+          <h3><a href="projects/large-scale-3d.html">Large-Scale Metric 3D Reconstruction — Building TUM in a Day</a></h3>
+          <span class="badge badge-completed">Completed</span>
+        </div>
+        <p class="meta">
+          <span>👥 Semester Project · TUM Computer Vision Group</span>
+          <span>📅 2025.03 – 2025.08</span>
+        </p>
+        <ul class="tags">
+          <li>3D Reconstruction</li><li>VGGT-1B</li><li>MASt3R</li><li>NKSR</li><li>CityGaussian</li><li>Metric Scale</li>
+        </ul>
+        <video class="thumb" autoplay loop muted playsinline poster="assets/img/largescale-poster.jpg">
+          <source src="assets/img/largescale-demo.mp4" type="video/mp4">
+        </video>
+        <p class="desc">
+          A scalable pipeline for building- and city-scale capture: ~1,300 video frames chunked into overlapping
+          40-frame batches, VGGT-1B per batch, <strong>MASt3R</strong> to recover metric scale across chunks, then
+          global alignment into point clouds, meshes and Gaussians. Novel-view rendering reaches
+          <strong>26.37 dB PSNR</strong> outdoors and 21.88 dB indoors.
+        </p>
+        <div class="actions">
+          <a class="btn" href="https://github.com/wuh2034/Large-Scale-Metric-3D-Reconstruction" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58l-.01-2.05c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5.99.11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.34-5.47-5.96 0-1.32.47-2.39 1.24-3.23-.12-.31-.54-1.53.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6.010 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.24 2.87.12 3.18.77.84 1.23 1.91 1.23 3.23 0 4.63-2.8 5.65-5.48 5.95.43.37.81 1.1.81 2.22l-.01 3.29c0 .32.22.7.83.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5Z"/></svg>
+            Code
+          </a>
+          <a class="btn ghost" href="https://github.com/wuh2034/Large-Scale-Metric-3D-Reconstruction/blob/main/assets/DL4SAI_Building_TUM_in_a_Day.pdf" target="_blank" rel="noopener">Report</a>
+          <a class="btn ghost" href="projects/large-scale-3d.html">Details</a>
+        </div>
+      </article>
+
+      <article class="card project">
+        <div class="project-head">
+          <h3><a href="projects/stereo-reconstruction.html">Stereo Reconstruction from Scratch (C++ / OpenCV)</a></h3>
+          <span class="badge badge-completed">Completed</span>
+        </div>
+        <p class="meta">
+          <span>📚 Course Project · Technical University of Munich</span>
+          <span>📅 2024.09 – 2024.12</span>
+        </p>
+        <ul class="tags">
+          <li>Stereo Vision</li><li>C++</li><li>OpenCV</li><li>Eigen</li><li>RANSAC</li><li>Open3D</li>
+        </ul>
+        <p class="desc">
+          A complete stereo pipeline written from the ground up: ORB / SIFT / BRISK matching, RANSAC fundamental-matrix
+          estimation, both calibrated and uncalibrated rectification, a hand-rolled <code>FastSGBM</code> disparity
+          solver, and depth maps, point clouds and meshes on the Middlebury dataset.
+        </p>
+        <div class="actions">
+          <a class="btn" href="https://github.com/wuh2034/stereo-reconstruction" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58l-.01-2.05c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5.99.11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.34-5.47-5.96 0-1.32.47-2.39 1.24-3.23-.12-.31-.54-1.53.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6.010 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.24 2.87.12 3.18.77.84 1.23 1.91 1.23 3.23 0 4.63-2.8 5.65-5.48 5.95.43.37.81 1.1.81 2.22l-.01 3.29c0 .32.22.7.83.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5Z"/></svg>
+            Code
+          </a>
+          <a class="btn ghost" href="projects/stereo-reconstruction.html">Details</a>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">© 2026 Han Wu · Munich, Germany · <a href="mailto:wuh2034@gmail.com">wuh2034@gmail.com</a></div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>

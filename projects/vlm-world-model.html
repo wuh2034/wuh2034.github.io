@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>VLM-Guided Interactive World Model — Han Wu</title>
+<meta content="Master's thesis at TUM: a chunk-level closed loop where a VLM steers an autoregressive video world model, builds an interaction data engine, and fine-tunes the model on its own filtered output." name="description"/>
+<link href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;text y='.9em' font-size='90'&gt;🧊&lt;/text&gt;&lt;/svg&gt;" rel="icon"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="../assets/css/style.css" rel="stylesheet"/>
+<script src="../assets/js/boot.js"></script>
+</head>
+<body>
+<nav class="nav">
+<div class="nav-inner">
+<a class="brand" href="../index.html">Han Wu</a>
+<div class="nav-links">
+<a href="../index.html">Home</a>
+<a class="active" href="../projects.html">Projects</a>
+
+<button class="icon-btn" data-toggle-theme="" type="button">☾</button>
+</div>
+</div>
+</nav>
+<main class="wrap">
+<header class="page-head">
+<a class="back" href="../projects.html">← All projects</a>
+<h1>VLM-Guided Interactive World Model</h1>
+<p class="meta" style="margin-top:12px;">
+<span class="badge badge-active">Active</span>
+<span>🎓 Master's Thesis · TUM Visual Computing &amp; AI Lab · Supervisor: Prof. Matthias Nießner</span>
+<span>📅 2025.12 – Present</span>
+</p>
+<ul class="tags"><li>World Models</li><li>VLM</li><li>SGLang</li><li>LoRA / PEFT</li><li>KV Cache</li><li>FlashAttention</li><li>Data Engine</li></ul>
+<p class="lede">
+A data flywheel for video world models: the VLM decides, the world model generates, the result is judged, and what survives comes back as training data.
+
+</p>
+<div class="actions" style="margin-top:20px;"></div>
+</header>
+<section>
+<div class="card prose">
+
+<h2>The problem</h2>
+<p>Autoregressive video world models drift. Over a long rollout the target drops out of frame, the scene state slides away from what was asked for, and responses to action commands become unreliable. This thesis treats those failures as a <strong>data problem</strong>: if a vision-language model can watch a rollout chunk by chunk and decide what should happen next, the same loop that generates video can also generate the supervision needed to fix it.</p>
+<div class="stat-row">
+<div class="stat"><div class="v">12,000</div><div class="k">interaction trajectories</div></div>
+<div class="stat"><div class="v">≈60k</div><div class="k">chunks · 12 h of video</div></div>
+<div class="stat"><div class="v">−45%</div><div class="k">12-frame generation latency</div></div>
+<div class="stat"><div class="v">−7.1 GiB</div><div class="k">peak VRAM (−8.4%)</div></div>
+</div>
+<h2>Interaction data engine</h2>
+<p>A fully automatic loop — <em>video generation → VLM understanding → action planning → next-chunk generation</em> — run at chunk granularity so a decision takes effect immediately rather than at the end of a rollout. It has accumulated roughly <strong>200 scenes and 12,000 trajectories</strong>; each trajectory is 57 frames across 5 chunks (3.56 s), for about <strong>60,000 chunks and 12 hours of video</strong>.</p>
+<h2>Data governance</h2>
+<ul>
+<li><strong>Two-stage quality control</strong> combining rule-based filters with VLM semantic evaluation, covering decode stability, target visibility, action outcome, temporal consistency and generation artefacts.</li>
+<li>Every clip carries an <strong>aligned prompt, camera-control signal and quality label</strong>, so the dataset is directly usable as conditioned supervision.</li>
+<li>Train and test are split <strong>by scene</strong>, which keeps near-duplicate chunks from the same rollout out of both sides and avoids leakage.</li>
+</ul>
+<h2>World-model fine-tuning</h2>
+<p>Parameter-efficient fine-tuning of <strong>LingBot-World v2 14B causal-fast</strong>: the VAE and UMT5 encoders stay frozen, <strong>Rank-32 LoRA</strong> is applied to the DiT attention Q/K/V/Out projections, and the camera-projection and AdaLN control modules are trained. BF16, gradient checkpointing and precomputed latent/text features keep multi-GPU H100 training inside its memory budget.</p>
+<h2>Inference runtime</h2>
+<p>LingBot-World v2 and <strong>Qwen3-VL</strong> are served persistently through <strong>SGLang</strong>, with <strong>LockStep scheduling</strong> so the VLM's feedback lands in the very next chunk instead of a chunk later. FlashAttention together with KV-cache window tuning brought 12-frame generation latency down from <strong>4.49 s to 2.47 s (−45%)</strong> and cut peak VRAM by <strong>7.1 GiB (−8.4%)</strong> — the difference between a loop you can iterate on and one you cannot.</p>
+<h2>Status</h2>
+<p>Thesis in progress at the Visual Computing &amp; Artificial Intelligence Lab, TUM, supervised by <strong>Prof. Matthias Nießner</strong>; system design and implementation are my own work end to end. The repository is private until the defence — code, dataset and results will be published here afterwards. 📢</p>
+
+</div>
+</section>
+</main>
+<footer>
+<div class="wrap">
+© 2026 Han Wu · Munich, Germany · <a href="mailto:wuh2034@gmail.com">wuh2034@gmail.com</a>
+
+</div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>
